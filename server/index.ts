@@ -34,31 +34,6 @@ app.post('/api/send-email', (req, res) => {
         },
     });
 
-    transporter
-        .verify()
-        .then(() => {
-            transporter
-                .sendMail({
-                    from: `"${name}" <henryheffernan.folio@gmail.com>`, // sender address
-                    to: 'henryheffernan@gmail.com, henryheffernan.folio@gmail.com', // list of receivers
-                    subject: `${name} <${email}> ${
-                        company ? `from ${company}` : ''
-                    } submitted a contact form`, // Subject line
-                    text: `${message}`, // plain text body
-                })
-                .then((info) => {
-                    console.log({ info });
-                    res.json({ message: 'success' });
-                })
-                .catch((e) => {
-                    console.error(e);
-                    res.status(500).send(e);
-                });
-        })
-        .catch((e) => {
-            console.error(e);
-            res.status(500).send(e);
-        });
 });
 
 // listen to app on port 8080
