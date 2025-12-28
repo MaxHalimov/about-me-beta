@@ -5,29 +5,39 @@ const path = require('path');
 
 module.exports = {
     entry: path.resolve(__dirname, '../src/script.ts'),
+
     output: {
         hashFunction: 'xxhash64',
         filename: 'bundle.[contenthash].js',
         path: path.resolve(__dirname, '../public'),
-        publicPath: './',
+        publicPath: './', // ✅ ИСПРАВЛЕНО ДЛЯ GITHUB PAGES
+        clean: true,
     },
+
     devtool: 'source-map',
+
     plugins: [
         new CopyWebpackPlugin({
             patterns: [{ from: path.resolve(__dirname, '../static') }],
         }),
+
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../src/index.html'),
             minify: true,
         }),
-        new MiniCSSExtractPlugin(),
+
+        new MiniCSSExtractPlugin({
+            filename: 'main.[contenthash].css',
+        }),
     ],
+
     resolve: {
         alias: {
             three: path.resolve('./node_modules/three'),
         },
         extensions: ['.tsx', '.ts', '.js'],
     },
+
     module: {
         rules: [
             // HTML
@@ -42,12 +52,15 @@ module.exports = {
                     },
                 ],
             },
+
+            // TypeScript
             {
-                test: /\.ts?$/,
+                test: /\.ts$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
-            // JS
+
+            // TSX / JSX
             {
                 test: /\.tsx$/,
                 exclude: /node_modules/,
@@ -68,14 +81,16 @@ module.exports = {
                     filename: 'assets/images/[hash][ext]',
                 },
             },
+
             // Audio
             {
                 test: /\.(mp3|wav)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[path][name].[ext]',
+                type: 'asset/resource',
+                generator: {
+                    filename: 'assets/audio/[hash][ext]',
                 },
             },
+
             // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,
@@ -84,6 +99,7 @@ module.exports = {
                     filename: 'assets/fonts/[hash][ext]',
                 },
             },
+
             // Shaders
             {
                 test: /\.(glsl|vs|fs|vert|frag)$/,
