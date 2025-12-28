@@ -3,13 +3,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
+const repo = 'about-me';
+const isCI = process.env.CI === 'true' || process.env.NODE_ENV === 'production';
+
 module.exports = {
     entry: path.resolve(__dirname, '../src/script.ts'),
     output: {
         hashFunction: 'xxhash64',
         filename: 'bundle.[contenthash].js',
         path: path.resolve(__dirname, '../public'),
-        publicPath: process.env.NODE_ENV === 'production' || process.env.CI ? '/about-me/' : '/',
+        publicPath: isCI ? `/${repo}/` : '/',
     },
     devtool: 'source-map',
     plugins: [
